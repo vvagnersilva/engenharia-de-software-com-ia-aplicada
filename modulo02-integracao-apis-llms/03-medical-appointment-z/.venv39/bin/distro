@@ -1,0 +1,8 @@
+#!/bin/sh
+'''exec' /home/wasilva/Documentos/anhanguera-Eng_IA_Aplicada/engenharia-de-software-com-ia-aplicada/modulo02-integracao-apis-llms/03-medical-appointment-z/.venv39/bin/python3.9 "$0" "$@"
+' '''
+import sys
+from distro.distro import main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(main())

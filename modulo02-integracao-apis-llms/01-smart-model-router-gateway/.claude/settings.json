@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --env-file .env src/index.ts)",
+      "Bash(kill 115698)"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sudo snap install docker)",
+      "Bash(sudo chown root:docker /var/run/docker.sock)",
+      "Bash(ls -la /var/run/docker.sock && groups)",
+      "Read(//var/run/**)",
+      "Bash(snap find *)"
+    ]
+  }
+}

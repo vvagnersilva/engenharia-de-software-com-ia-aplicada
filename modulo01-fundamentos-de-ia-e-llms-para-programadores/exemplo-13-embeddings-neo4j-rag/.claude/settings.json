@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sudo snap remove notepad-plus-plus)",
+      "Bash(snap list *)",
+      "Bash(flatpak list *)",
+      "Read(//usr/**)",
+      "Bash(whatsapp-desktop-linux)",
+      "Bash(df -h /tmp && ls -la /tmp | head -5)",
+      "Read(//tmp/**)",
+      "Bash(sudo snap refresh whatsapp-desktop-linux)"
+    ]
+  }
+}

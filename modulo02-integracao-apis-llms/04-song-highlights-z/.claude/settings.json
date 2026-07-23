@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import docx; print\\('ok'\\)\")",
+      "Bash(sudo apt install -y libreoffice)",
+      "WebFetch(domain:www.focoemloterias.com.br)",
+      "WebFetch(domain:lotorama.com.br)"
+    ]
+  }
+}

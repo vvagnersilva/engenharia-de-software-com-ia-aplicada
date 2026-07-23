@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: song-highlights-java
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/song_highlights_java
+    username: postgres
+    password: ${POSTGRES_PASSWORD:mysecretpassword}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  ai:
+    openai:
+      api-key: ${OPENROUTER_API_KEY}
+      # Spring AI acrescenta "/v1/chat/completions" ao base-url por padrão,
+      # então aqui NÃO se repete o "/v1" (diferente do OPENROUTER_BASE_URL
+      # usado por outros SDKs, que costuma incluir o "/v1").
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: nvidia/nemotron-3-super-120b-a12b:free
+          temperature: 0.7
+
+app:
+  chat:
+    # Mesmo valor de config.maxMessagesToSummary no projeto TypeScript original:
+    # dispara a sumarização quando o total de mensagens da conversa atinge este número.
+    max-messages-to-summary: 2
