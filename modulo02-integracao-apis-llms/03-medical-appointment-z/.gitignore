@@ -11,3 +11,5 @@ outputs/
 
 # SQLite database
 data/
+
+.rastro/

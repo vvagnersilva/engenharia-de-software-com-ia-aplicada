@@ -63,7 +63,7 @@ export class OpenRouterService {
             console.error('Error OpenRouterService', error)
 
             return {
-                success: true,
+                success: false,
                 error: error instanceof Error ?
                     error.message :
                     String(error),

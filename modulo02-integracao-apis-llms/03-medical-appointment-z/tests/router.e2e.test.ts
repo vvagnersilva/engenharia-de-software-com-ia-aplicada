@@ -1,7 +1,8 @@
-import { describe, it } from 'node:test';
+import { describe, it, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from '../src/server.ts';
 import { professionals } from '../src/services/appointmentService.ts';
+import { getDatabase } from '../src/database/database.ts';
 
 const app = createServer();
 
@@ -15,9 +16,23 @@ async function makeARequest(question: string) {
     });
 }
 
+// Garante que as consultas criadas por essas execuções anteriores não
+// deixem o mesmo horário "ocupado" e quebrem uma nova rodada dos testes.
+function clearTestAppointments() {
+    const db = getDatabase();
+    db.prepare('DELETE FROM appointments WHERE patientName = ? AND professionalId = ?')
+        .run('Maria Santos', professionals.at(0)!.id);
+    db.prepare('DELETE FROM appointments WHERE patientName = ? AND professionalId = ?')
+        .run('Joao da Silva', professionals.at(1)!.id);
+}
+
 describe('Medical Appointment System - E2E Tests', async () => {
 
-    it.skip('Schedule appointment - Success', async () => {
+    before(() => {
+        clearTestAppointments();
+    });
+
+    it('Schedule appointment - Success', async () => {
         const response = await makeARequest(
             `Olá, sou Maria Santos e quero agendar uma consulta com ${professionals.at(0)?.name} para amanhã às 16h para um check-up regular`
         )

@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "dev (src/index.ts)",
+      "runtimeArgs": ["--env-file=.env", "--watch"],
+      "program": "${workspaceFolder}/src/index.ts",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "langgraph:serve",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["@langchain/langgraph-cli@latest", "dev"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}

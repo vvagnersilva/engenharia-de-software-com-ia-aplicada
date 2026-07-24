@@ -2,6 +2,7 @@ import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { HumanMessage } from '@langchain/core/messages';
 import { buildGraph } from '../src/graph/factory.ts';
+import { config } from '../src/config.ts';
 import { unlinkSync, existsSync } from 'node:fs';
 
 describe('Chat de Recomendação Musical - Testes E2E', () => {
