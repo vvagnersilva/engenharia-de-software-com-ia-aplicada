@@ -183,10 +183,10 @@ Detalhes em [`docs/capacidades.md`](docs/capacidades.md), seção "Notas honesta
 
 ## Módulos
 
-| Módulo | README |
+| Módulo | O que faz |
 |---|---|
-| Capacidades MCP compartilhadas | [showcase-core](showcase-core/README.md) |
-| Servidor STDIO | [showcase-server-stdio](showcase-server-stdio/README.md) |
-| Servidor Streamable HTTP servlet | [showcase-server-webmvc](showcase-server-webmvc/README.md) |
-| Servidor Streamable HTTP reativo | [showcase-server-webflux](showcase-server-webflux/README.md) |
-| Cliente multi-transporte | [showcase-client](showcase-client/README.md) |
+| [showcase-core](showcase-core/README.md) | Todas as capacidades MCP em um único lugar, **independente de transporte**: 14 tools (`@McpTool`), 3 resources + 2 templates (`@McpResource`), 3 prompts (`@McpPrompt`), completions (`@McpComplete`), sampling, elicitation, roots, progresso, logging e ping. Os servidores só apontam o component scan para cá. |
+| [showcase-server-stdio](showcase-server-stdio/README.md) | Servidor com transporte **STDIO** (JSON-RPC por stdin/stdout), o formato que Claude Desktop, Claude Code e MCP Inspector usam para subir servidores locais como subprocesso. Stdout é reservado ao protocolo; o log vai para arquivo. |
+| [showcase-server-webmvc](showcase-server-webmvc/README.md) | Servidor **Streamable HTTP síncrono** na pilha servlet (Spring MVC + Tomcat), porta 8091, endpoint único `/mcp`. Mantém também o perfil `sse` com o transporte SSE legado, só para clientes antigos. |
+| [showcase-server-webflux](showcase-server-webflux/README.md) | Servidor **Streamable HTTP reativo** (WebFlux + Netty, I/O não bloqueante), porta 8092, endpoint `/mcp`. O perfil `stateless` demonstra o modo sem sessão, em que as tools bidirecionais são puladas no boot. |
+| [showcase-client](showcase-client/README.md) | Cliente Spring Boot que conecta **nos três servidores ao mesmo tempo** (STDIO como subprocesso + 2× HTTP) e exercita todas as capacidades: 17 demos via REST (`:8090/demo/*`) ou CLI (`--demo=`), handlers de sampling/elicitation/logging/progresso e declaração de roots. Inclui também a variante async do SDK. |
