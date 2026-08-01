@@ -1,0 +1,73 @@
+# Sobe os dois servidores MCP HTTP e o cliente ja apontado para eles.
+#
+#   docker compose up --build
+#
+# Depois de tudo saudavel:
+#   curl http://localhost:8090/demo                      -> lista as demos
+#   curl -X POST http://localhost:8090/demo/tools        -> executa uma demo
+#   curl http://localhost:8090/demo/sampling/text        -> versao texto puro
+#
+# O servidor STDIO nao entra aqui de proposito: ele e um subprocesso de quem o
+# consome (Claude Desktop, Inspector), nao um servico de rede.
+#
+# ATENCAO: o `--build` compila as 3 imagens EM PARALELO (3 builds Maven
+# simultaneos) e pode esgotar a RAM de uma maquina com IDE aberta. Se o
+# notebook engasgar, limite a paralelismo do build:
+#   COMPOSE_PARALLEL_LIMIT=1 docker compose up --build
+# Os limites de memoria/CPU abaixo valem so para o RUNTIME dos containers.
+
+services:
+  showcase-webmvc:
+    build:
+      context: .
+      dockerfile: showcase-server-webmvc/Dockerfile
+    image: mcp-showcase/server-webmvc:latest
+    container_name: showcase-webmvc
+    ports:
+      - "8091:8091"
+    mem_limit: 768m
+    cpus: 2
+    environment:
+      SERVER_PORT: "8091"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+
+  showcase-webflux:
+    build:
+      context: .
+      dockerfile: showcase-server-webflux/Dockerfile
+    image: mcp-showcase/server-webflux:latest
+    container_name: showcase-webflux
+    ports:
+      - "8092:8092"
+    mem_limit: 768m
+    cpus: 2
+    environment:
+      SERVER_PORT: "8092"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+      # Troque para "stateless" para experimentar o modo sem sessao:
+      SPRING_PROFILES_ACTIVE: "default"
+
+  showcase-client:
+    build:
+      context: .
+      dockerfile: showcase-client/Dockerfile
+    image: mcp-showcase/client:latest
+    container_name: showcase-client
+    ports:
+      - "8090:8090"
+    mem_limit: 768m
+    cpus: 2
+    environment:
+      SERVER_PORT: "8090"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+      SPRING_PROFILES_ACTIVE: "http-only"
+      SHOWCASE_WEBMVC_URL: "http://showcase-webmvc:8091"
+      SHOWCASE_WEBFLUX_URL: "http://showcase-webflux:8092"
+      # Para sampling com LLM real, exporte a chave e acrescente o perfil:
+      #   SPRING_PROFILES_ACTIVE: "http-only,real-llm"
+      #   ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY}"
+    depends_on:
+      showcase-webmvc:
+        condition: service_healthy
+      showcase-webflux:
+        condition: service_healthy

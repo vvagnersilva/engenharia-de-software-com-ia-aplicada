@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>br.dev.showcase.mcp</groupId>
+        <artifactId>mcp-java-showcase</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>showcase-server-webflux</artifactId>
+    <name>Showcase Server - WebFlux</name>
+    <description>Servidor MCP Streamable HTTP reativo, com perfil stateless</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>br.dev.showcase.mcp</groupId>
+            <artifactId>showcase-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Streamable HTTP reativo sobre WebFlux; tambem serve o modo STATELESS -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

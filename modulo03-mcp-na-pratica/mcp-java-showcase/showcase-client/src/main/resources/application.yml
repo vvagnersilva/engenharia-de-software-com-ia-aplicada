@@ -1,0 +1,99 @@
+server:
+  port: ${SERVER_PORT:8090}
+
+spring:
+  application:
+    name: showcase-client
+  profiles:
+    # Sem perfil explicito, o local-stdio entra e adiciona a conexao STDIO
+    # (sobe o jar do servidor como subprocesso). Qualquer perfil ativo - como o
+    # http-only do docker compose - desliga esse default, e e assim que o
+    # container fica so com as conexoes HTTP: mapas de connections de perfis
+    # diferentes sao MESCLADOS pelo Spring, entao nao daria para "limpar" a
+    # conexao STDIO em um perfil; ela precisa nascer em um perfil proprio.
+    default: local-stdio
+  ai:
+    # Nenhum modelo de chat por padrao: o sampling usa o provedor mockado e o
+    # projeto roda sem nenhuma chave de API. O perfil real-llm inverte isso.
+    model:
+      chat: none
+    mcp:
+      client:
+        enabled: true
+        name: showcase-client
+        version: 1.0.0
+        type: SYNC
+        request-timeout: 60s
+        # Avisa os servidores quando a lista de roots muda.
+        root-change-notification: true
+        toolcallback:
+          # Este projeto chama as tools direto pelo McpSyncClient; nao precisamos
+          # expor as tools MCP como ToolCallback para um ChatClient.
+          enabled: false
+        streamable-http:
+          connections:
+            webmvc:
+              url: ${SHOWCASE_WEBMVC_URL:http://localhost:8091}
+              endpoint: /mcp
+            webflux:
+              url: ${SHOWCASE_WEBFLUX_URL:http://localhost:8092}
+              endpoint: /mcp
+
+showcase:
+  client:
+    # Pasta exposta aos servidores como root MCP.
+    workspace: ${SHOWCASE_WORKSPACE:.}
+    # Usado pela demo assincrona, que monta o cliente direto no SDK.
+    webflux-url: ${SHOWCASE_WEBFLUX_URL:http://localhost:8092}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    br.dev.showcase: DEBUG
+    io.modelcontextprotocol: INFO
+
+---
+# Perfil real-llm: usa um LLM de verdade no sampling.
+# Requer ANTHROPIC_API_KEY no ambiente.
+spring:
+  config:
+    activate:
+      on-profile: real-llm
+  ai:
+    model:
+      chat: anthropic
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: ${SHOWCASE_LLM_MODEL:claude-sonnet-4-5}
+          max-tokens: 1024
+
+---
+# Perfil default local: adiciona a conexao STDIO subindo o jar como subprocesso.
+# Ativar qualquer outro perfil (ex.: http-only, usado no docker compose) desliga
+# este bloco e o cliente fica apenas com as conexoes HTTP.
+spring:
+  config:
+    activate:
+      on-profile: local-stdio
+  ai:
+    mcp:
+      client:
+        stdio:
+          connections:
+            stdio:
+              command: ${SHOWCASE_STDIO_COMMAND:java}
+              args:
+                - -jar
+                - ${SHOWCASE_STDIO_JAR:../showcase-server-stdio/target/showcase-server-stdio-1.0.0-SNAPSHOT.jar}

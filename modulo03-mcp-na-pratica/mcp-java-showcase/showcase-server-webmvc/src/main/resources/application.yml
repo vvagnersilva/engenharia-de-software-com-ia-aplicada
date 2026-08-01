@@ -1,0 +1,59 @@
+server:
+  port: ${SERVER_PORT:8091}
+
+spring:
+  application:
+    name: showcase-server-webmvc
+  ai:
+    mcp:
+      server:
+        enabled: true
+        # STREAMABLE = Streamable HTTP (endpoint unico com POST/GET/DELETE).
+        protocol: STREAMABLE
+        name: showcase-webmvc
+        version: 1.0.0
+        type: SYNC
+        instructions: >
+          Servidor de demonstracao do MCP Java SDK sobre Spring MVC (Streamable HTTP).
+        request-timeout: 30s
+        capabilities:
+          tool: true
+          resource: true
+          prompt: true
+          completion: true
+        tool-change-notification: true
+        resource-change-notification: true
+        prompt-change-notification: true
+        streamable-http:
+          mcp-endpoint: /mcp
+          keep-alive-interval: 30s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    br.dev.showcase: DEBUG
+    io.modelcontextprotocol: INFO
+
+---
+# Perfil LEGADO: SSE classico (endpoints /sse + /mcp/message).
+# Depreciado pelo protocolo em favor do Streamable HTTP; mantido so para clientes antigos.
+spring:
+  config:
+    activate:
+      on-profile: sse
+  ai:
+    mcp:
+      server:
+        protocol: SSE
+        sse-endpoint: /sse
+        sse-message-endpoint: /mcp/message
